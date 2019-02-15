@@ -38,7 +38,15 @@ namespace RampantRobot
                 Game = factory.MoveMech(directions, Game);
                 if (Game.Win == true)
                 {
-                    break;
+                    for (int i = 0; i < Width; i++)
+                    {
+                        for (int j = 0; j < Heigth; j++)
+                        {
+                            Console.Write(string.Format("{0} ", Game.Grid[i, j]));
+                        }
+                        Console.Write(Environment.NewLine + Environment.NewLine);
+                    }
+                        break;
                 }
                 directions = factory.Display(Game);
 

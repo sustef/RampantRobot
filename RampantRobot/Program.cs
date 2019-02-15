@@ -13,7 +13,7 @@ namespace RampantRobot
             Console.WriteLine("Let's play RampantRobots!");
             Console.WriteLine("Try to catch all robots before you are out of turns");
 
-            Factory factory = new Factory(10, 10, 6, 10, true);
+            Factory factory = new Factory(10, 10, 6, 10, false);
             factory.Run(factory.Width, factory.Heigth, factory.Robots, factory.Turns, factory.RobotsMove);
 
 
