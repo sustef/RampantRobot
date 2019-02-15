@@ -23,25 +23,25 @@ namespace RampantRobot
             {
                 randommoverobot.Row++; // beweging naar boven
                 if (randommoverobot.Row > RowLength - 1) // als je buiten het veld stapt
-                    randommoverobot.Row = 0; // kom je terug aan de andere kant van het veld
+                    randommoverobot.Row = RowLength - 1; // blijf je aan de rand staan
             }
             else if (Directions == 1)
             {
                 randommoverobot.Row--; // beweging naar beneden
                 if (randommoverobot.Row < 0) // als je buiten veld stapt
-                    randommoverobot.Row = RowLength - 1; // kom je terug aan de andere kant van het veld
+                    randommoverobot.Row = 0; // blijf je aan de rand staan
             }
             else if (Directions == 2)
             {
                 randommoverobot.Col--; // beweging naar links
                 if (randommoverobot.Col < 0)
-                    randommoverobot.Col = ColLength - 1; 
+                    randommoverobot.Col = 0; 
             }
             else if (Directions == 3)
             {
                 randommoverobot.Col++; // beweging naar rechts
                 if (randommoverobot.Col > ColLength - 1)
-                    randommoverobot.Col = 0; 
+                    randommoverobot.Col = ColLength - 1; 
             }
 
             return randommoverobot;

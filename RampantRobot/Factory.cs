@@ -8,16 +8,61 @@ namespace RampantRobot
 {
     class Factory
     {
-        public Field CreateField(int RowLength, int ColLength, int TotalRobots, int Turns, List<int> RobotRow, List<int> RobotCol, int RowMech, int ColMech, bool Win)
+        public int Width;
+        public int Heigth;
+        public int Robots;
+        public int Turns;
+        public bool RobotsMove;
+
+        public Factory(int width, int heigth, int robots, int turns, bool robotsmove)
+        {
+            Width = width;
+            Heigth = heigth;
+            Robots = robots;
+            Turns = turns;
+            RobotsMove = robotsmove;
+        }
+
+        public void Run(int width, int heigth, int robots, int turns, bool robotsmove)
+        {
+            Factory factory = new Factory(width, heigth, robots, turns, robotsmove);
+            List<int> RobotRow = new List<int>();
+            List<int> RobotCol = new List<int>();
+            Location MechLocation = new Location(0, 0);
+            bool win = false;
+            Field Game = factory.CreateField(RobotRow, RobotCol, MechLocation, win);
+            string directions = factory.Display(Game);
+
+            while (Game.Win == false && Game.TurnsLeft > 0)
+            {
+                Game = factory.MoveMech(directions, Game);
+                if (Game.Win == true)
+                {
+                    break;
+                }
+                directions = factory.Display(Game);
+
+            }
+            if (Game.Win == true)
+            {
+                Console.WriteLine("You have won!!!!!");
+            }
+            else
+            {
+                Console.WriteLine("You are out of turns, YOU LOST LOSER!!!!");
+            }
+        }
+
+        public Field CreateField(List<int> RobotRow, List<int> RobotCol, Location MechLocation, bool Win)
         {
             // lege matrix wordt aangemaakt met RowLength aantal rijen en ColLength aantal kolommen
-            string[,] grid = new string[RowLength, ColLength];
-            Field field = new Field(grid, TotalRobots, Turns, RobotRow, RobotCol, RowMech, ColMech, RowLength, ColLength, Win);
+            string[,] grid = new string[Width, Heigth];
+            Field field = new Field(grid, Robots, Turns, RobotRow, RobotCol, MechLocation, Win);
 
             // lege waarde opvullen met iets overzichtelijks
-            for (int i = 0; i < field.RowLength; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int j = 0; j < field.ColLength; j++)
+                for (int j = 0; j < Heigth; j++)
                     field.Grid[i, j] = ".";
             }
             // De mechanic begint altijd linksboven
@@ -29,14 +74,14 @@ namespace RampantRobot
             for (int i = 0; i < field.RobotsLeft; i++)
             {
                 // voor een nieuwe poging weer op false zetten
-                bool MechLocation = false;
-                while (MechLocation == false)
+                bool MLoc = false;
+                while (MLoc == false)
                 {
                     // hier worden iedere keer de startposities aangemaakt                    
-                    Location startpositie = robot.StartPositionRobot(field.RowLength, field.ColLength);
+                    Location startpositie = robot.StartPositionRobot(Width, Heigth);
                     // voor een nieuwe poging weer op false zetten
                     bool SameLocation = false;
-                    if (startpositie.Row == field.RowMech && startpositie.Col == field.ColMech)
+                    if (startpositie.Row == MechLocation.Row && startpositie.Col == MechLocation.Col)
                     {
                         // wanneer een robot op de positie van de Mechanic komt, doet ie niks en gaat ie het nog een keer proberen in de while loop
                     }
@@ -47,7 +92,7 @@ namespace RampantRobot
                             field.Grid[startpositie.Row, startpositie.Col] = "R";
                             field.RobotRow.Add(startpositie.Row); // opslaan in list om te controleren of Robots niet op dezelfde plek komen
                             field.RobotCol.Add(startpositie.Col);
-                            MechLocation = true; // niet echt true maar stap is doorlopen en while loop kan stoppen                            
+                            MLoc = true; // niet echt true maar stap is doorlopen en while loop kan stoppen                            
                         }
                         // de andere robots moeten gecontroleerd worden of ze niet op dezelfde plaats staan
                         else
@@ -68,7 +113,7 @@ namespace RampantRobot
                                 field.Grid[startpositie.Row, startpositie.Col] = "R";
                                 field.RobotRow.Add(startpositie.Row);
                                 field.RobotCol.Add(startpositie.Col);
-                                MechLocation = true; // niet echt true maar stap is doorlopen en while loop kan stoppen
+                                MLoc = true; // niet echt true maar stap is doorlopen en while loop kan stoppen
                             }
                         }
                     }
@@ -85,9 +130,9 @@ namespace RampantRobot
             Console.WriteLine("You have {0} turns remaining", field.TurnsLeft);
 
             // Matrix wordt laten zien. Hierin staan de robots en de mechanic.
-            for (int i = 0; i < field.RowLength; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for (int j = 0; j < field.ColLength; j++)
+                for (int j = 0; j < Heigth; j++)
                 {
                     Console.Write(string.Format("{0} ", field.Grid[i, j]));
                 }
@@ -133,16 +178,16 @@ namespace RampantRobot
             for (int i = 0; i < directions.Length; i++)
             {
                 // Oude Mechanic wordt vervangen door niks.
-                field.Grid[field.RowMech, field.ColMech] = ".";
+                field.Grid[field.MechLocation.Row, field.MechLocation.Col] = ".";
                 // Nieuwe locatie van de Mechanic wordt bepaald.
-                Location newLocation = mechanic.MoveMechanic(field.RowMech, field.ColMech, field.RowLength, field.ColLength, directions[i]);
-                field.RowMech = newLocation.Row;
-                field.ColMech = newLocation.Col;
-                field.Grid[field.RowMech, field.ColMech] = "M";
-                for (int j = 0; j < field.RobotsLeft; j++)
+                Location newLocation = mechanic.MoveMechanic(field.MechLocation.Row, field.MechLocation.Col, Width, Heigth, directions[i]);
+                field.MechLocation.Row = newLocation.Row;
+                field.MechLocation.Col = newLocation.Col;
+                field.Grid[field.MechLocation.Row, field.MechLocation.Col] = "M";
+                for (int j = field.RobotsLeft -1 ; j > -1; j--)
                 {
                     
-                    if (field.RowMech == field.RobotRow[j] && field.ColMech == field.RobotCol[j])
+                    if (field.MechLocation.Row == field.RobotRow[j] && field.MechLocation.Col == field.RobotCol[j])
                     {
                         field.RobotRow.RemoveAt(j);
                         field.RobotCol.RemoveAt(j);
@@ -150,7 +195,11 @@ namespace RampantRobot
                     }
 
                 }
-                field = MoveRob(field);
+                if (RobotsMove == true)
+                {
+                    field = MoveRob(field);
+                }
+                
             }
             if(field.RobotsLeft == 0)
             {
@@ -163,11 +212,11 @@ namespace RampantRobot
         {
             Robot robot = new Robot();
             
-            for (int j = 0; j < field.RobotsLeft; j++)
+            for (int j = field.RobotsLeft-1; j > -1; j--)
             {
                 bool RobotRamp = false;
                 field.Grid[field.RobotRow[j], field.RobotCol[j]] = "."; // oude plaats verwijderen
-                Location newLocation = robot.RandomMoveRobot(field.RowLength, field.ColLength, field.RobotRow[j], field.RobotCol[j]);
+                Location newLocation = robot.RandomMoveRobot(Width, Heigth, field.RobotRow[j], field.RobotCol[j]);
 
                 for (int k = 0; k < field.RobotsLeft; k++)
                 {
@@ -180,7 +229,7 @@ namespace RampantRobot
 
                 if (RobotRamp == false)
                 {
-                    if (newLocation.Row == field.RowMech && newLocation.Col == field.ColMech)
+                    if (newLocation.Row == field.MechLocation.Row && newLocation.Col == field.MechLocation.Col)
                     {
                         // so robot is captured end deleted from field
                         field.RobotRow.RemoveAt(j);

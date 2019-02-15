@@ -18,27 +18,18 @@ namespace RampantRobot
 
         public List<int> RobotRow { get; set; }
 
-        public int RowMech { get; set; }
-
-        public int ColMech { get; set; }
-
-        public int RowLength { get; set; }
-
-        public int ColLength { get; set; }
+        public Location MechLocation { get; set; }
 
         public bool Win { get; set; }
 
-        public Field(string[,] grid, int robotsleft, int turnsleft, List<int> robotcol, List<int> robotrow, int rowmech, int colmech, int rowlength, int collength, bool win)
+        public Field(string[,] grid, int robotsleft, int turnsleft, List<int> robotcol, List<int> robotrow, Location mechlocation, bool win)
         {
             Grid = grid;
             RobotsLeft = robotsleft;
             TurnsLeft = turnsleft;
             RobotRow = robotrow;
             RobotCol = robotcol;
-            RowMech = rowmech;
-            ColMech = colmech;
-            ColLength = collength;
-            RowLength = rowlength;
+            MechLocation = mechlocation;
             Win = win;
         }
             

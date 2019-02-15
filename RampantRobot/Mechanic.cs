@@ -15,25 +15,25 @@ namespace RampantRobot
             {
                 NewLocation.Col--;
                 if (NewLocation.Col < 0)
-                    NewLocation.Col = ColLength - 1;
+                    NewLocation.Col = 0;
             }
             else if (Direction == 'd')
             {
                 NewLocation.Col++;
                 if (NewLocation.Col > ColLength - 1)
-                    NewLocation.Col = 0;
+                    NewLocation.Col = ColLength - 1;
             }
             else if (Direction == 'w')
             {
                 NewLocation.Row--;
                 if (NewLocation.Row < 0)
-                    NewLocation.Row = RowLength - 1;
+                    NewLocation.Row = 0;
             }
             else if (Direction == 's')
             {
                 NewLocation.Row++;
                 if (NewLocation.Row > RowLength - 1)
-                    NewLocation.Row = 0;
+                    NewLocation.Row = RowLength - 1;
             }
             return NewLocation;
         }
